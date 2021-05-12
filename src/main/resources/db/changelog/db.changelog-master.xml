@@ -739,4 +739,24 @@
         <modifyDataType tableName="users" columnName="username_ja" newDataType="varchar(32)"/>
     </changeSet>
 
+    <changeSet id="20210512-1" author="duncte123">
+        <dropColumn tableName="schedule_line" columnName="category_id" />
+        <dropForeignKeyConstraint baseTableName="schedule_line"
+                                  constraintName="fk_schedule_line_category" />
+        <addColumn tableName="schedule_line_runner">
+            <column name="username" type="varchar(32)">
+                <constraints nullable="false"/>
+            </column>
+            <!-- fake users should only have a username displayed -->
+            <column name="fake" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+        <!-- Insert the usernames -->
+        <sql>
+            INSERT INTO schedule_line_runner(username)
+            SELECT u.username
+            FROM users u
+            LEFT JOIN schedule_line_runner slr on c.user_id = u.id
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

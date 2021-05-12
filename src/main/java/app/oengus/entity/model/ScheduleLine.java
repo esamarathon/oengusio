@@ -80,11 +80,6 @@ public class ScheduleLine {
     @JsonView(Views.Public.class)
     private int position;
 
-    @Column(name = "category_id")
-    @JsonView(Views.Public.class)
-    // nullable
-    private Integer categoryId;
-
     @Column(name = "run_type")
     @JsonView(Views.Public.class)
     private RunType type;
@@ -194,14 +189,6 @@ public class ScheduleLine {
 
     public void setRunners(final List<User> runners) {
         this.runners = runners;
-    }
-
-    public Integer getCategoryId() {
-        return this.categoryId;
-    }
-
-    public void setCategoryId(final Integer categoryId) {
-        this.categoryId = categoryId;
     }
 
     public boolean isEmulated() {
