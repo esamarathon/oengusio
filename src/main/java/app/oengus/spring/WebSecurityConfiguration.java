@@ -33,7 +33,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(final HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 				// we don't need CSRF because our token is invulnerable
-				// .csrf().disable()
+				.csrf().disable()
 
 				.exceptionHandling().authenticationEntryPoint(this.unauthorizedHandler()).and()
 				.exceptionHandling().accessDeniedHandler(this.forbiddenHandler()).and()

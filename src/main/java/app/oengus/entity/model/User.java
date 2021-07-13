@@ -3,7 +3,9 @@ package app.oengus.entity.model;
 import app.oengus.spring.model.Role;
 import app.oengus.spring.model.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.Cache;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +28,7 @@ import static app.oengus.requests.user.IUserRequest.USERNAME_REGEX;
 @Entity
 @Table(name = "users")
 @Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User implements UserDetails {
 
     @Id
@@ -51,10 +53,17 @@ public class User implements UserDetails {
 
     @ElementCollection
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @Column(name = "role")
     @JsonView(Views.Public.class)
     private List<Role> roles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @OrderBy("platform ASC")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonView(Views.Public.class)
+    private List<SocialAccount> connections;
 
     @Column
     @JsonView(Views.Internal.class)
@@ -73,26 +82,14 @@ public class User implements UserDetails {
     @JsonView(Views.Internal.class)
     private String twitterId;
 
-    @Column(name = "discord_name")
-    @JsonView(Views.Public.class)
-    @Size(max = 37)
-    private String discordName;
+    @Column(name = "patreon_id")
+    @JsonView(Views.Internal.class)
+    private String patreonId;
 
-    @Column(name = "twitter_name")
-    @JsonView(Views.Public.class)
-    @Size(max = 15)
-    private String twitterName;
-
-    @Column(name = "twitch_name")
-    @JsonView(Views.Public.class)
-    @Size(max = 25)
-    private String twitchName;
-
-    @Column(name = "speedruncom_name")
+    @Column(name = "pronouns")
     @JsonView(Views.Public.class)
     @Size(max = 20)
-    @Pattern(regexp = SPEEDRUN_COM_NAME_REGEX)
-    private String speedruncomName;
+    private String pronouns;
 
     @Override
     public boolean isEnabled() {
@@ -207,36 +204,12 @@ public class User implements UserDetails {
         this.twitchId = twitchId;
     }
 
-    public String getDiscordName() {
-        return this.discordName;
+    public List<SocialAccount> getConnections() {
+        return connections;
     }
 
-    public void setDiscordName(final String discordName) {
-        this.discordName = discordName;
-    }
-
-    public String getTwitterName() {
-        return this.twitterName;
-    }
-
-    public void setTwitterName(final String twitterName) {
-        this.twitterName = twitterName;
-    }
-
-    public String getTwitchName() {
-        return this.twitchName;
-    }
-
-    public void setTwitchName(final String twitchName) {
-        this.twitchName = twitchName;
-    }
-
-    public String getSpeedruncomName() {
-        return this.speedruncomName;
-    }
-
-    public void setSpeedruncomName(final String speedruncomName) {
-        this.speedruncomName = speedruncomName;
+    public void setConnections(List<SocialAccount> connections) {
+        this.connections = connections;
     }
 
     public String getUsernameJapanese() {

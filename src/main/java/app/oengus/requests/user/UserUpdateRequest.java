@@ -1,13 +1,16 @@
 package app.oengus.requests.user;
 
+import app.oengus.entity.model.SocialAccount;
 import app.oengus.spring.model.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class UserUpdateRequest implements IUserRequest {
 
@@ -36,9 +39,16 @@ public class UserUpdateRequest implements IUserRequest {
     private String twitchId;
 
     @Nullable
-    @Column(name = "twitter_id")
     @JsonView(Views.Internal.class)
     private String twitterId;
+
+    @Nullable
+    @JsonView(Views.Internal.class)
+    private String patreonId;
+
+    @NotNull
+    @JsonView(Views.Public.class)
+    private List<SocialAccount> connections;
 
     @Nullable
     @JsonView(Views.Public.class)
@@ -60,6 +70,12 @@ public class UserUpdateRequest implements IUserRequest {
     @Size(max = 20)
     @Pattern(regexp = SPEEDRUN_COM_NAME_REGEX)
     private String speedruncomName;
+
+    @Nullable
+    @Column(name = "pronouns")
+    @JsonView(Views.Public.class)
+    @Size(max = 20)
+    private String pronouns;
 
     public String getUsername() {
         return username;
@@ -121,6 +137,15 @@ public class UserUpdateRequest implements IUserRequest {
     }
 
     @Nullable
+    public String getPatreonId() {
+        return patreonId;
+    }
+
+    public void setPatreonId(@Nullable String patreonId) {
+        this.patreonId = patreonId;
+    }
+
+    @Nullable
     public String getDiscordName() {
         return discordName;
     }
@@ -154,5 +179,22 @@ public class UserUpdateRequest implements IUserRequest {
 
     public void setSpeedruncomName(@Nullable String speedruncomName) {
         this.speedruncomName = speedruncomName;
+    }
+
+    @Nullable
+    public String getPronouns() {
+        return pronouns;
+    }
+
+    public void setPronouns(@Nullable String pronouns) {
+        this.pronouns = pronouns;
+    }
+
+    public List<SocialAccount> getConnections() {
+        return connections;
+    }
+
+    public void setConnections(List<SocialAccount> connections) {
+        this.connections = connections;
     }
 }

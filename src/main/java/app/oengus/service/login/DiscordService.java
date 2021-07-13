@@ -1,7 +1,9 @@
 package app.oengus.service.login;
 
 import app.oengus.api.DiscordApi;
+import app.oengus.entity.constants.SocialPlatform;
 import app.oengus.entity.dto.SyncDto;
+import app.oengus.entity.model.SocialAccount;
 import app.oengus.entity.model.User;
 import app.oengus.entity.model.api.discord.DiscordUser;
 import app.oengus.helper.OauthHelper;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,8 +66,13 @@ public class DiscordService {
                 user.setUsername("user" + RandomUtils.nextInt(0, 999999));
             }
 
+            final SocialAccount account = new SocialAccount();
+            account.setUser(user);
+            account.setPlatform(SocialPlatform.DISCORD);
+            account.setUsername(discordUser.getAsTag());
+            user.setConnections(List.of(account));
+
             user.setDiscordId(discordUser.getId());
-            user.setDiscordName(discordUser.getAsTag());
             user = this.userRepositoryService.save(user);
         }
 

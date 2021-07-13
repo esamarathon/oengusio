@@ -48,34 +48,24 @@ public class UserController {
     @PostMapping("/login")
     @PermitAll
     @ApiIgnore
-    public ResponseEntity<?> login(@RequestBody final LoginRequest request, @RequestHeader("Origin") final String host) {
+    public ResponseEntity<?> login(@RequestBody final LoginRequest request, @RequestHeader("Origin") final String host) throws LoginException {
         if (!this.oauthOrigins.contains(host)) {
             throw new OengusBusinessException("ORIGIN_DISALLOWED");
         }
 
-        try {
-            return ResponseEntity.ok(this.userService.login(host, request));
-        } catch (final LoginException e) {
-            // TODO: upgrade once v2 is released
-            return ResponseEntity.badRequest().body(new Error(e.getMessage()));
-        }
+        return ResponseEntity.ok(this.userService.login(host, request));
     }
 
     @PostMapping("/sync")
     @RolesAllowed({"ROLE_USER"})
     @PreAuthorize("!isBanned()")
     @ApiIgnore
-    public ResponseEntity<?> sync(@RequestBody final LoginRequest request, @RequestHeader("Origin") final String host) {
+    public ResponseEntity<?> sync(@RequestBody final LoginRequest request, @RequestHeader("Origin") final String host) throws LoginException {
         if (!this.oauthOrigins.contains(host)) {
             throw new OengusBusinessException("ORIGIN_DISALLOWED");
         }
 
-        try {
-            return ResponseEntity.ok(this.userService.sync(host, request));
-        } catch (final LoginException e) {
-            // TODO: upgrade once v2 is released
-            return ResponseEntity.badRequest().body(new Error(e.getMessage()));
-        }
+        return ResponseEntity.ok(this.userService.sync(host, request));
     }
 
     @GetMapping("/{name}/exists")

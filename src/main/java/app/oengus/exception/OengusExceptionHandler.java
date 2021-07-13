@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,17 @@ public class OengusExceptionHandler {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(toMap(req, exc));
+    }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<?> notFoundException(final LoginException exc, final HttpServletRequest req) {
+        final String header = req.getHeader("oengus-version");
+
+        if (!"2".equals(header)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.badRequest().body(toMap(req, exc));
     }
 
     // TODO: find all parts that catch this exception and remove it

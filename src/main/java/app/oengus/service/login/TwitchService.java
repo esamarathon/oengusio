@@ -2,7 +2,9 @@ package app.oengus.service.login;
 
 import app.oengus.api.TwitchApi;
 import app.oengus.api.TwitchOauthApi;
+import app.oengus.entity.constants.SocialPlatform;
 import app.oengus.entity.dto.SyncDto;
+import app.oengus.entity.model.SocialAccount;
 import app.oengus.entity.model.User;
 import app.oengus.entity.model.api.TwitchUser;
 import app.oengus.helper.OauthHelper;
@@ -63,8 +65,13 @@ public class TwitchService {
                 user.setUsername("user" + RandomUtils.nextInt(0, 999999));
             }
 
+            final SocialAccount account = new SocialAccount();
+            account.setUser(user);
+            account.setPlatform(SocialPlatform.TWITCH);
+            account.setUsername(twitchUser.getLogin());
+            user.setConnections(List.of(account));
+
             user.setTwitchId(twitchUser.getId());
-            user.setTwitchName(twitchUser.getLogin());
             user = this.userRepositoryService.save(user);
         }
 

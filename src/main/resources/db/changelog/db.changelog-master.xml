@@ -745,4 +745,47 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="20210712-1" author="duncte123">
+        <addColumn tableName="users"> <!-- Purposefully invalid so I can't accidentally commit this to the db -->
+            <column name="pronouns" type="varchar(20)"/>
+            <column name="patreon_id" type="varchar(20)"/>
+            <column name="nationality" type="varchar(20)"/>
+        </addColumn>
+
+        <createTable tableName="social_accounts">
+            <column name="user_id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="platform" type="varchar(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <!-- email max length is 320 chars -->
+            <column name="username" type="varchar(320)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="social_accounts"
+                                 baseColumnNames="user_id"
+                                 constraintName="fk_user_social_account"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+        <sql>
+            INSERT INTO social_accounts (user_id, platform, username)
+            SELECT id as user_id, 'TWITTER' as platform, twitter_name as username FROM USERS WHERE twitter_name IS NOT NULL;
+
+            INSERT INTO social_accounts (user_id, platform, username)
+            SELECT id as user_id, 'TWITCH' as platform, twitch_name as username FROM USERS WHERE twitch_name IS NOT NULL;
+
+            INSERT INTO social_accounts (user_id, platform, username)
+            SELECT id as user_id, 'DISCORD' as platform, discord_name as username FROM USERS WHERE discord_name IS NOT NULL;
+
+            INSERT INTO social_accounts (user_id, platform, username)
+            SELECT id as user_id, 'SPEEDRUNCOM' as platform, speedruncom_name as username FROM USERS WHERE speedruncom_name IS NOT NULL;
+        </sql>
+        <dropColumn tableName="users" columnName="twitter_name"/>
+        <dropColumn tableName="users" columnName="twitch_name"/>
+        <dropColumn tableName="users" columnName="discord_name"/>
+        <dropColumn tableName="users" columnName="speedruncom_name"/>
+    </changeSet>
+
 </databaseChangeLog>

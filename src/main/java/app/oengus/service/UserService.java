@@ -124,14 +124,13 @@ public class UserService {
     public void markDeleted(final int id) throws NotFoundException {
         final User user = this.userRepositoryService.findById(id);
 
+        // TODO: delete all connections
+
+        user.setConnections(null);
         user.setUsernameJapanese(null);
         user.setDiscordId(null);
-        user.setDiscordName(null);
         user.setTwitchId(null);
-        user.setTwitchName(null);
         user.setTwitterId(null);
-        user.setTwitterName(null);
-        user.setSpeedruncomName(null);
         user.setMail(null);
 //        user.setMail("deleted-user@oengus.io");
         user.setEnabled(false);
@@ -139,6 +138,7 @@ public class UserService {
         final String randomHash = String.valueOf(Objects.hash(user.getUsername(), user.getId()));
 
         // "Deleted" is 7 in length
+        // TODO: update for new limit
         user.setUsername("Deleted" + randomHash.substring(0, Math.min(7, randomHash.length())));
 
         this.userRepositoryService.save(user);

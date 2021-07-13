@@ -1,6 +1,8 @@
 package app.oengus.service.login;
 
+import app.oengus.entity.constants.SocialPlatform;
 import app.oengus.entity.dto.SyncDto;
+import app.oengus.entity.model.SocialAccount;
 import app.oengus.entity.model.User;
 import app.oengus.exception.OengusBusinessException;
 import app.oengus.helper.PrincipalHelper;
@@ -103,8 +105,13 @@ public class TwitterLoginService {
                     user.setUsername("user" + RandomUtils.nextInt(0, 999999));
                 }
 
+                final SocialAccount account = new SocialAccount();
+                account.setUser(user);
+                account.setPlatform(SocialPlatform.TWITTER);
+                account.setUsername(twitterUser.getScreenName());
+                user.setConnections(List.of(account));
+
                 user.setTwitterId(Long.toString(twitterUser.getId()));
-                user.setTwitterName(twitterUser.getScreenName());
                 user = this.userRepositoryService.save(user);
             }
 
