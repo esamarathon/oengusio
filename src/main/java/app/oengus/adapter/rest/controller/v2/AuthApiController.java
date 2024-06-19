@@ -1,20 +1,20 @@
 package app.oengus.adapter.rest.controller.v2;
 
+import app.oengus.adapter.rest.dto.BooleanStatusDto;
+import app.oengus.adapter.rest.dto.v1.request.LoginRequest;
 import app.oengus.adapter.rest.dto.v2.auth.*;
 import app.oengus.adapter.rest.mapper.AuthMapper;
 import app.oengus.application.AuthService;
+import app.oengus.application.TOTPService;
 import app.oengus.application.UserService;
 import app.oengus.application.port.persistence.EmailVerificationPersistencePort;
 import app.oengus.application.port.security.JWTPort;
 import app.oengus.application.port.security.UserSecurityPort;
-import app.oengus.adapter.rest.dto.BooleanStatusDto;
-import app.oengus.application.TOTPService;
-import app.oengus.adapter.rest.dto.v1.request.LoginRequest;
+import app.oengus.configuration.OengusConfiguration;
 import com.google.zxing.WriterException;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +34,7 @@ public class AuthApiController implements AuthApi {
     private final UserService userService;
     private final EmailVerificationPersistencePort emailVerificationPersistencePort;
     private final JWTPort jwtPort;
-    @Value("${oengus.baseUrl}")
-    private String baseUrl;
+    private final OengusConfiguration configuration;
 
     @Override
     public ResponseEntity<LoginResponseDto> login(@Valid LoginDto body) {
@@ -51,7 +50,7 @@ public class AuthApiController implements AuthApi {
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(
-                this.authService.loginWithService(body.getService(), body.getCode(), this.baseUrl)
+                this.authService.loginWithService(body.getService(), body.getCode(), this.configuration.getBaseUrl())
             );
     }
 

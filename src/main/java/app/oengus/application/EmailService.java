@@ -1,7 +1,9 @@
 package app.oengus.application;
 
+import app.oengus.configuration.OengusConfiguration;
 import app.oengus.domain.exception.WrappedException;
 import app.oengus.domain.OengusUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -15,14 +17,15 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
-    private final String baseUrl;
     private final String mailFrom;
     private final String mailFromName;
+    private final OengusConfiguration oengusConfiguration;
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
 
-    public EmailService(
+/*    public EmailService(
         JavaMailSender mailSender,
         @Value("${spring.mail.properties.mail.from.address}") String mailFrom,
         @Value("${spring.mail.properties.mail.from.name}") String mailFromName,
@@ -33,7 +36,7 @@ public class EmailService {
         this.mailFrom = mailFrom;
         this.mailFromName = mailFromName;
         this.templateEngine = templateEngine;
-    }
+    }*/
 
     private MimeMessage getDefaultEmailSettings() throws UnsupportedEncodingException, MessagingException {
         final MimeMessage message = this.mailSender.createMimeMessage();
@@ -48,7 +51,7 @@ public class EmailService {
             final MimeMessage message = getDefaultEmailSettings();
 
             Context myContext = new Context();
-            myContext.setVariable("domain", this.baseUrl);
+            myContext.setVariable("domain", this.oengusConfiguration.getBaseUrl());
             myContext.setVariable("token", resetToken);
 
             String htmlTemplate = templateEngine.process("password-reset.html", myContext);
@@ -68,7 +71,7 @@ public class EmailService {
             final MimeMessage message = getDefaultEmailSettings();
 
             Context myContext = new Context();
-            myContext.setVariable("domain", this.baseUrl);
+            myContext.setVariable("domain", this.oengusConfiguration.getBaseUrl());
             myContext.setVariable("hash", verifyHash);
 
             String htmlTemplate = templateEngine.process("email-verification.html", myContext);

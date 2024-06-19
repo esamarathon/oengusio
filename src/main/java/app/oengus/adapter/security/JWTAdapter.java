@@ -1,6 +1,7 @@
 package app.oengus.adapter.security;
 
 import app.oengus.application.port.security.JWTPort;
+import app.oengus.configuration.OengusConfiguration;
 import app.oengus.domain.OengusUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -8,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.sentry.Hint;
 import io.sentry.Sentry;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -19,14 +21,10 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Component
+@RequiredArgsConstructor
 public class JWTAdapter implements JWTPort {
     private static final String JWT_ISS = "OengusIO";
-
-    @Value("${oengus.jwt.secret}")
-    private String secret;
-
-    @Value("${oengus.jwt.expiration}") // 604800 seconds == 7 days
-    private String expirationTime;
+    private final OengusConfiguration configuration;
 
     @Override
     public Claims getAllClaimsFromToken(final String token) {
@@ -74,7 +72,7 @@ public class JWTAdapter implements JWTPort {
     }
 
     private String doGenerateToken(final Map<String, Object> claims, final String username, final int id) {
-        final long expirationTimeLong = Long.parseLong(this.expirationTime); //in second
+        final long expirationTimeLong = this.configuration.getJwt().getExpiration(); //in seconds
 
         final Instant now = Instant.now();
 
@@ -94,7 +92,7 @@ public class JWTAdapter implements JWTPort {
     }
 
     private SecretKey getKey() {
-        return Keys.hmacShaKeyFor(this.secret.getBytes());
+        return Keys.hmacShaKeyFor(this.configuration.getJwt().getSecret().getBytes());
     }
 
 }

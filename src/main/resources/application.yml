@@ -1,7 +1,7 @@
 oengus:
     jwt:
         secret: ${JWT_SECRET}
-        expiration: 604800
+        expiration: ${JWT_EXPIRATION:604800}
     baseUrl: ${BASE_URL}
     oauthOrigins: ${OAUTH_ORIGINS}
     shortUrl: "https://oengus.fun"
