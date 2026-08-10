@@ -90,7 +90,7 @@ dependencies {
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.22.1")
 
     // documentation
-    implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-api", version = "3.0.3")
+    implementation(group = "org.springdoc", name = "springdoc-openapi-starter-webmvc-api", version = "3.1.0")
 
     // iCal4J
     implementation(group = "org.mnode.ical4j", name = "ical4j", version = "4.3.0")
