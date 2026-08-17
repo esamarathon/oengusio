@@ -85,7 +85,7 @@ dependencies {
     implementation(group = "org.springframework.cloud", name = "spring-cloud-starter-openfeign", version = "5.0.2")
 
     // JACKSON
-    implementation(group = "tools.jackson.core", name = "jackson-core", version = "3.2.1")
+    implementation(group = "tools.jackson.core", name = "jackson-core", version = "3.2.2")
     implementation(group = "com.fasterxml.jackson.core", name = "jackson-annotations", version = "2.22")
     implementation(group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version = "2.22.1")
 
